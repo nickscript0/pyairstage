@@ -81,10 +81,21 @@ class ApiCloud(AirstageApi):
                 "https://bke.euro.airstagelight.com/apiv1/users/me/refresh_token"
             )
             self._API_BASE_URL = "https://bke.euro.airstagelight.com/apiv1/"
+        elif region == "us":
+            self._SIGNIN_BODY = '{"user": {"email": "%s","password": "%s","country": "%s","language": "en","deviceToken": "%s","ssid": "%s","osVersion": "%s"}}'
+            self._REFRESH_BODY = '{"user": {"refreshToken": "%s"}}'
+            self._SET_PARAMETER_BODY = '{"deviceSubId": 0, "parameters": [{"name": "%s","desiredValue": "%s"}]}'
+            self._API_GET_ACCESS_TOKEN_URL = (
+                "https://bke.us.airstagelight.com/apiv1/users/sign_in"
+            )
+            self._API_REFRESH_TOKEN_URL = (
+                "https://bke.us.airstagelight.com/apiv1/users/me/refresh_token"
+            )
+            self._API_BASE_URL = "https://bke.us.airstagelight.com/apiv1/"
         elif region == "cn":
             raise ApiError("CN region not supported yet")
         else:
-            raise ApiError("US region not supported yet")
+            raise ApiError(f"Region '{region}' not supported")
 
         self._ACCESS_TOKEN_FILE = tokenpath
 
