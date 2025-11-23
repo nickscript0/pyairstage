@@ -188,7 +188,11 @@ class ApiCloud(AirstageApi):
                     data=payload,
                     headers=kwargs.get("headers"),
                 ) as resp:
-                    assert resp.status == 200
+                    if resp.status != 200:
+                        response_text = await resp.text()
+                        error = f"Response status {resp.status}: {response_text}"
+                        _LOGGER.error(f"API error: {error}")
+                        break
                     data = await resp.json(content_type=None)
                     return data
             except (
@@ -200,16 +204,13 @@ class ApiCloud(AirstageApi):
                 error = err
             except asyncio.TimeoutError:
                 error = "Connection timed out."
-            except AssertionError:
-                error = "Response status not 200."
-                break
             except SyntaxError as err:
                 error = "Invalid response"
                 break
 
             await asyncio.sleep(1)
         raise ApiError(
-            f"No valid response after {count} failed attempt{['','s'][count>1]}. Last error was: {error}"
+            f"No valid response after {count} failed attempt{['', 's'][count > 1]}. Last error was: {error}"
         )
 
     async def _read_token(self, access_token_file=None) -> str | None:
@@ -425,5 +426,5 @@ class ApiLocal(AirstageApi):
 
             await asyncio.sleep(1)
         raise ApiError(
-            f"No valid response after {count} failed attempt{['','s'][count>1]}"
+            f"No valid response after {count} failed attempt{['', 's'][count > 1]}"
         ) from error
