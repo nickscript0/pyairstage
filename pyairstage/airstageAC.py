@@ -308,6 +308,24 @@ class AirstageAC:
             raise AirstageACError(f"Invalid mode value: {mode}")
         await self._set_device_parameter(ACParameter.MINIMUM_HEAT, mode)
 
+    def get_defrost_status(self) -> bool:
+        """
+        Get defrost cycle status.
+
+        Returns:
+            bool: True if defrost mode is ON (value "01000000"), False if OFF (value "00000000")
+        """
+        value = self._get_cached_device_parameter(ACParameter.DEFROST_MODE)
+        if value not in ["00000000", "01000000"]:
+            import logging
+
+            logger = logging.getLogger(__name__)
+            logger.warning(
+                f"Unexpected iu_op_stat (defrost mode) value: {value}. Expected '00000000' (OFF) or '01000000' (ON)"
+            )
+
+        return value == "01000000"
+
     def get_hmn_detection(self) -> BooleanDescriptors | None:
         if self._is_capability_available(ACParameter.HMN_DETECTION):
             value = self._get_cached_device_parameter(ACParameter.HMN_DETECTION)
