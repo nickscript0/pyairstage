@@ -379,7 +379,7 @@ class ApiLocal(AirstageApi):
 
         if value not in ["00000000", "01000000"]:
             _LOGGER.warning(
-                f"Unexpected defrost cycle value: {value}. Expected '00000000' (OFF) or '01000000' (ON)"
+                f"Unexpected iu_op_stat (defrost mode) value: {value}. Expected '00000000' (OFF) or '01000000' (ON)"
             )
 
         return value == "01000000"
