@@ -307,6 +307,7 @@ class ApiLocal(AirstageApi):
                 ACParameter.ENERGY_SAVE_FAN,
                 ACParameter.HMN_DETECTION_AUTO_SAVE,
                 ACParameter.MINIMUM_HEAT,
+                ACParameter.DEFROST_MODE,
                 ACParameter.POWERFUL_MODE,
                 ACParameter.ECONOMY_MODE,
                 ACParameter.ERROR_CODE,
@@ -365,6 +366,23 @@ class ApiLocal(AirstageApi):
             return response["value"]
 
         raise ApiError(f"Get parameter failed")
+
+    async def get_defrost_status(self) -> bool:
+        """
+        Get defrost cycle status.
+
+        Returns:
+            bool: True if defrost mode is ON (value "01000000"), False if OFF (value "00000000")
+        """
+        result = await self.get_parameters([ACParameter.DEFROST_MODE])
+        value = result.get(ACParameter.DEFROST_MODE, "00000000")
+
+        if value not in ["00000000", "01000000"]:
+            _LOGGER.warning(
+                f"Unexpected defrost cycle value: {value}. Expected '00000000' (OFF) or '01000000' (ON)"
+            )
+
+        return value == "01000000"
 
     async def set_parameter(self, dsn: str, name: str, value: str):
         jsonPayload = {

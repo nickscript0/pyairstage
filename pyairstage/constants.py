@@ -165,6 +165,8 @@ class ACParameter(enum.StrEnum):
 
     MINIMUM_HEAT = "iu_min_heat"
 
+    DEFROST_MODE = "iu_op_stat"
+
     # # below are readonly properties
     # DISPLAY_TEMPERATURE = "display_temperature"
     # # Unclear what this does, seems to somewhat correlate to af_vertical_direction but not entirely
